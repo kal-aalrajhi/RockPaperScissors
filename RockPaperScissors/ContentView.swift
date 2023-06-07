@@ -5,21 +5,6 @@
 //  Created by Dr Cpt Blackbeard on 6/7/23.
 //
 
-//Each turn of the game the app will randomly pick either rock, paper, or scissors.
-//Each turn the app will alternate between prompting the player to win or lose.
-//The player must then tap the correct move to win or lose the game.
-//If they are correct they score a point; otherwise they lose a point.
-//The game ends after 10 questions, at which point their score is shown.
-//So, if the app chose “Rock” and “Win” the player would need to choose “Paper”, but if the app chose “Rock” and “Lose” the player would need to choose “Scissors”.
-/**
-1. Start with an App template, then create a property to store the three possible moves: rock, paper, and scissors.
-2. You’ll need to create two @State properties to store the app’s current choice and whether the player should win or lose.
-3. You can use Int.random(in:) to select a random move. You can use it for whether the player should win too if you want, but there’s an even easier choice: Bool.random() is randomly true or false. After the initial value, use toggle() between rounds so it’s always changing.
-4. Create a VStack showing the player’s score, the app’s move, and whether the player should win or lose. You can use if shouldWin to return one of two different text views.
-5. The important part is making three buttons that respond to the player’s move: Rock, Paper, or Scissors.
-6. Use the font() modifier to adjust the size of your text. If you’re using emoji for the three moves, they also scale. Tip: You can ask for very large system fonts using .font(.system(size: 200)) – they’ll be a fixed size, but at least you can make sure they are nice and big!
-*/
-
 import SwiftUI
 
 struct ContentView: View {
@@ -29,6 +14,8 @@ struct ContentView: View {
     @State private var isShowingScore = false
     @State private var gameMessage = ""
     @State private var score = 0
+    @State private var questionCounter = 0
+    @State private var isGameOver = false
 
     let moves = ["🪨", "📄", "✂️"]
     let loseMoves = ["📄", "✂️", "🪨"]
@@ -75,18 +62,23 @@ struct ContentView: View {
         .alert(gameMessage, isPresented: $isShowingScore) {
             Button("Continue", action: randomCondition)
         } message: {
-            Text("Your score is \(score) out of 5")
+            Text("Your current score is \(score)")
+        }
+        .alert(gameMessage, isPresented: $isGameOver) {
+            Button("Start New Game", action: resetGame)
+        } message: {
+            Text("Your final score is \(score) out of 5")
         }
     }
     
     func randomCondition() {
         currentMove = Int.random(in: 0..<3)
-        isWin = Bool.random()
+        isWin.toggle()
     }
     
     func moveChosen(_ number: Int) {
-        print(currentMove)
-        print(number)
+        questionCounter += 1
+        
         if currentMove == number {
             score += 1
             gameMessage = "Correct!"
@@ -95,9 +87,19 @@ struct ContentView: View {
                 score -= 1
             }
             gameMessage = "Incorrect."
-            
         }
-        isShowingScore = true
+        
+        if questionCounter == 5 {
+            isGameOver = true
+        } else {
+            isShowingScore = true
+        }
+    }
+    
+    func resetGame() {
+        score = 0
+        questionCounter = 0
+        randomCondition()
     }
 }
 
