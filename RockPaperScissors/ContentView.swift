@@ -23,44 +23,45 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var currentMove = "🪨"
-    @State private var win = false
+    @State private var currentMove = Int.random(in: 0..<3)
+    @State private var playerMove = Int.random(in: 0..<3)
+    @State private var isWin = false
 
     let moves = ["🪨", "📄", "✂️"]
+    let loseMoves = ["📄", "✂️", "🪨"]
+    let winMoves = ["✂️", "🪨", "📄"]
     
     var body: some View {
         VStack {
             Spacer()
-            // Game Title
             Text("Rock, Paper, Scissors")
                 .frame(maxWidth: .infinity)
                 .foregroundColor(.secondary)
                 .font(.title2.monospaced().weight(.heavy))
             
             Spacer()
-
             VStack(spacing: 30) {
                 Text("Condition to Match: ")
                     .font(.title3.monospaced().weight(.semibold))
                 HStack {
-                    Text(currentMove)
+                    Text(moves[currentMove])
                         .shadow(radius: 5)
-                    Text(win ? "| win" : "| lose")
+                    Text(isWin ? "| win" : "| lose")
                 }
             }
             .font(.system(size:70))
             
             Spacer()
-            // Player choice
             VStack(spacing: 30) {
                 Text("Choose a move: ")
                     .font(.title3.monospaced().weight(.semibold))
                 HStack(spacing: 30) {
-                    ForEach(moves, id: \.self) { move in
+                    ForEach(0..<3) { number in
                         Button {
+                            moveChosen(number)
                             randomCondition()
                         } label: {
-                            Text(move)
+                            Text(isWin ? winMoves[number] : loseMoves[number])
                                 .font(.system(size:70))
                                 .shadow(radius: 5)
                         }
@@ -73,8 +74,16 @@ struct ContentView: View {
     }
     
     func randomCondition() {
-        currentMove = moves.randomElement() ?? "n/a"
-        win = Bool.random()
+        currentMove = Int.random(in: 0..<3)
+        isWin = Bool.random()
+    }
+    
+    func moveChosen(_ number: Int) {
+        print(currentMove)
+        print(number)
+        if (currentMove == number) {
+            print("CORRECT!!!")
+        } 
     }
 }
 
