@@ -23,8 +23,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var currentMove = ""
-    @State private var winOrLose = ""
+    @State private var currentMove = "🪨"
+    @State private var win = false
 
     let moves = ["🪨", "📄", "✂️"]
     
@@ -43,8 +43,9 @@ struct ContentView: View {
                 Text("Condition to Match: ")
                     .font(.title3.monospaced().weight(.semibold))
                 HStack {
-                    Text("\(moves[0])")
-                    Text("| win")
+                    Text(currentMove)
+                        .shadow(radius: 5)
+                    Text(win ? "| win" : "| lose")
                 }
             }
             .font(.system(size:70))
@@ -57,10 +58,11 @@ struct ContentView: View {
                 HStack(spacing: 30) {
                     ForEach(moves, id: \.self) { move in
                         Button {
-                            print("Something!")
+                            randomCondition()
                         } label: {
                             Text(move)
                                 .font(.system(size:70))
+                                .shadow(radius: 5)
                         }
                     }
                 }
@@ -69,7 +71,17 @@ struct ContentView: View {
         }
         .padding()
     }
+    
+    func randomCondition() {
+        currentMove = moves.randomElement() ?? "n/a"
+        win = Bool.random()
+    }
 }
+
+
+
+
+
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
